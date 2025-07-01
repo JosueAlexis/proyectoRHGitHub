@@ -1,0 +1,130 @@
+﻿@page
+@model ProyectoRH2025.Pages.Operadores.AltaEmpleadoModel
+@{
+    ViewData["Title"] = "Alta de Empleado";
+}
+
+<div class="container-fluid">
+    <div class="mb-3">
+        <a class="btn btn-secondary" asp-page="./Buscar">
+            <i class="fas fa-arrow-left"></i> Regresar a la lista
+        </a>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#general">General</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="general">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Número de Reloj *</label>
+                                        <input asp-for="Empleado.Reloj" class="form-control" required />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Nombres *</label>
+                                        <input asp-for="Empleado.Names" class="form-control" required />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Apellido *</label>
+                                        <input asp-for="Empleado.Apellido" class="form-control" required />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Segundo Apellido *</label>
+                                        <input asp-for="Empleado.Apellido2" class="form-control" required />
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Correo *</label>
+                                        <input asp-for="Empleado.Email" class="form-control" type="email" required />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Teléfono *</label>
+                                        <input asp-for="Empleado.Telefono" class="form-control" required />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Tel. Emergencia *</label>
+                                        <input asp-for="Empleado.TelEmergencia" class="form-control" required />
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">RFC *</label>
+                                        <input asp-for="Empleado.Rfc" class="form-control" required />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">CURP *</label>
+                                        <input asp-for="Empleado.Curp" class="form-control" required />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">NSS *</label>
+                                        <input asp-for="Empleado.NumSSocial" class="form-control" required />
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Fecha de Ingreso *</label>
+                                        <input asp-for="Empleado.Fingreso" class="form-control" type="date" required />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Puesto *</label>
+                                        <input list="puestos" name="PuestoNombre" id="PuestoNombre" class="form-control" required />
+                                        <datalist id="puestos">
+                                            @foreach (var puesto in Model.Puestos)
+                                            {
+                                                <option value="@puesto.Puesto" data-id="@puesto.Puesto"></option>
+                                            }
+                                        </datalist>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Status *</label>
+                                        <select asp-for="Empleado.Status" class="form-control">
+                                            <option value="1">Activo</option>
+                                            <option value="0">Inactivo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Fotografía *</label>
+                                <input type="file" name="FotoArchivo" accept="image/*" class="form-control mb-2" onchange="previewFoto(event)" required />
+                                <img id="fotoPreview" src="" class="img-fluid rounded border" style="max-height: 300px; width: auto; display: none;" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Guardar Empleado</button>
+                        @if (!string.IsNullOrEmpty(Model.Mensaje))
+                        {
+                            <div class="alert alert-success mt-3">@Model.Mensaje</div>
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function previewFoto(event) {
+            const input = event.target;
+            const preview = document.getElementById("fotoPreview");
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

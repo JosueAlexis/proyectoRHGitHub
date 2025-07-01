@@ -1,0 +1,30 @@
+﻿@page
+@model ProyectoRH2025.Pages.Sellos.ImportarModel
+@{
+    ViewData["Title"] = "Importar Sellos";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Importar sellos desde Excel</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="archivoExcel" class="form-label">Selecciona archivo Excel (.xlsx)</label>
+                    <input type="file" name="ArchivoExcel" class="form-control" accept=".xlsx" />
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-file-import"></i> Importar
+                </button>
+            </form>
+
+            @if (!string.IsNullOrEmpty(Model.Mensaje))
+            {
+                <div class="alert alert-info mt-3">@Model.Mensaje</div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+﻿@page
+@model ProyectoRH2025.Pages.Sellos.AsignarSupervisorModel
+@{
+    ViewData["Title"] = "Asignar Sellos a Supervisor";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Asignar Sellos a Supervisor</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label">Selecciona Supervisor</label>
+                    <select asp-for="SupervisorId" asp-items="Model.Supervisores" class="form-select"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Cantidad de sellos a asignar</label>
+                    <input asp-for="Cantidad" type="number" min="1" class="form-control" />
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-random"></i> Asignar Aleatoriamente
+                </button>
+            </form>
+
+            @if (!string.IsNullOrEmpty(Model.Mensaje))
+            {
+                <div class="alert alert-info mt-3">@Model.Mensaje</div>
+            }
+        </div>
+    </div>
+</div>

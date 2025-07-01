@@ -1,0 +1,141 @@
+﻿@page "{id:int}"
+@model ProyectoRH2025.Pages.Operadores.DetallesModel
+@{
+    ViewData["Title"] = "Detalles del Empleado";
+}
+
+<div class="container-fluid">
+    <div class="mb-3">
+        <a class="btn btn-secondary" asp-page="./Buscar">
+            <i class="fas fa-arrow-left"></i> Regresar a la lista
+        </a>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#general">General</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#vivienda">Vivienda</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#documentos">Documentos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#vacaciones">Vacaciones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#uniforme">Uniforme</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="general">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label class="form-label">Número de Reloj</label>
+                                    <input type="text" class="form-control" value="@Model.Empleado?.Reloj" readonly />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Nombres</label>
+                                    <input type="text" class="form-control" value="@Model.Empleado?.Names" readonly />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Apellido</label>
+                                    <input type="text" class="form-control" value="@Model.Empleado?.Apellido" readonly />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Segundo Apellido</label>
+                                    <input type="text" class="form-control" value="@Model.Empleado?.Apellido2" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Correo</label>
+                                    <input type="email" class="form-control" value="@Model.Empleado?.Email" readonly />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Teléfono</label>
+                                    <input type="tel" class="form-control" value="@Model.Empleado?.Telefono" readonly />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Tel. Emergencia</label>
+                                    <input type="tel" class="form-control" value="@Model.Empleado?.TelEmergencia" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">RFC</label>
+                                    <input type="text" class="form-control" value="@Model.Empleado?.Rfc" readonly />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">CURP</label>
+                                    <input type="text" class="form-control" value="@Model.Empleado?.Curp" readonly />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">NSS</label>
+                                    <input type="text" class="form-control" value="@Model.Empleado?.NumSSocial" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Fecha de Ingreso</label>
+                                    @if (Model.FechaIngresoFormateada != null)
+                                    {
+                                        <input type="text" class="form-control" value="@Model.FechaIngresoFormateada" readonly />
+                                    }
+                                    else
+                                    {
+                                        <input type="text" class="form-control" value="No disponible" readonly />
+                                    }
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Puesto</label>
+                                    <input type="text" class="form-control" value="@Model.NombrePuesto" readonly />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Status</label>
+                                    <input type="text" class="form-control" value="@(Model.Empleado?.Status == 1 ? "Activo" : "Inactivo")" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    @if (!string.IsNullOrEmpty(Model.ImagenBase64))
+                                    {
+                                        <img src="data:image/jpeg;base64,@Model.ImagenBase64"
+                                             class="img-fluid rounded"
+                                             alt="Foto del empleado"
+                                             style="max-height: 300px; width: auto;" />
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-user fa-8x text-secondary"></i>
+                                        <p class="mt-2">Foto no disponible</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="vivienda">
+                    <p>Contenido de Vivienda</p>
+                </div>
+                <div class="tab-pane fade" id="documentos">
+                    <p>Contenido de Documentos</p>
+                </div>
+                <div class="tab-pane fade" id="vacaciones">
+                    <p>Contenido de Vacaciones</p>
+                </div>
+                <div class="tab-pane fade" id="uniforme">
+                    <p>Contenido de Uniforme</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

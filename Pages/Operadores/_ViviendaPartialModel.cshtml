@@ -1,0 +1,69 @@
+﻿@model ProyectoRH2025.Models.ViviendaEmpleado
+
+@if (TempData["ViviendaGuardada"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["ViviendaGuardada"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+}
+
+<form method="post" asp-page-handler="GuardarVivienda">
+    <div class="row">
+        <div class="col-md-4">
+            <label>País</label>
+            <input asp-for="Pais" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Estado</label>
+            <input asp-for="Estado" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Municipio</label>
+            <input asp-for="Municipio" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <label>Ciudad</label>
+            <input asp-for="Ciudad" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Código Postal</label>
+            <input asp-for="codPostal" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Colonia</label>
+            <input asp-for="Colonia" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <label>Calle</label>
+            <input asp-for="Calle" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Número Exterior</label>
+            <input asp-for="NoExterior" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Número Interior</label>
+            <input asp-for="NoInterior" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <label>No. Crédito Infonavit</label>
+            <input asp-for="NoCredito" class="form-control" />
+        </div>
+        <div class="col-md-6">
+            <label>ID Empleado</label>
+            <input asp-for="idEmpleado" class="form-control" readonly />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-4">Guardar Vivienda</button>
+</form>

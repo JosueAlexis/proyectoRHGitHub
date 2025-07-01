@@ -1,0 +1,125 @@
+﻿@page
+@model ProyectoRH2025.Pages.Operadores.BuscarModel
+@{
+    ViewData["Title"] = "Buscar Personal";
+}
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="mb-4">
+            <div class="row align-items-end">
+                <div class="col-md-6">
+                    <h4 class="mb-3">Personal</h4>
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" asp-for="SelectedCompany" value="1" id="stilCheck" onchange="this.form.submit()">
+                            <label class="form-check-label" for="stilCheck">
+                                Stil
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" asp-for="SelectedCompany" value="2" id="aknaCheck" onchange="this.form.submit()">
+                            <label class="form-check-label" for="aknaCheck">
+                                Akna
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" asp-for="SelectedCompany" value="0" id="allCheck" onchange="this.form.submit()">
+                            <label class="form-check-label" for="allCheck">
+                                Todos
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" asp-for="SearchTerm" placeholder="Buscar..."
+                               oninput="this.form.submit()">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        @if (!string.IsNullOrEmpty(Model.SearchMessage))
+        {
+            <div class="alert alert-@Model.SearchType alert-dismissible fade show mb-3" role="alert">
+                @Model.SearchMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Num.Reloj</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Segundo Apellido</th>
+                        <th>Fecha De Ingreso</th>
+                        <th>Correo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Empleados != null && Model.Empleados.Any())
+                    {
+                        @foreach (var empleado in Model.Empleados)
+                        {
+                            <tr data-id="@empleado.Id" class="empleado-row">
+                                <td>@empleado.Reloj</td>
+                                <td>@empleado.Names</td>
+                                <td>@empleado.Apellido</td>
+                                <td>@empleado.Apellido2</td>
+                                <td>@empleado.Fingreso?.ToShortDateString()</td>
+                                <td>@empleado.Email</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <p class="text-muted mb-0">@Model.SearchMessage</p>
+                                @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                                {
+                                    <small class="d-block text-muted mt-2">
+                                        Sugerencias:
+                                        <ul class="list-unstyled mt-1">
+                                            <li>• Verifique que la ortografía sea correcta</li>
+                                            <li>• Intente con términos más generales</li>
+                                            <li>• Asegúrese de haber seleccionado la compañía correcta</li>
+                                        </ul>
+                                    </small>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Agregar cursor pointer a las filas
+            $('.empleado-row').css('cursor', 'pointer');
+
+            // Manejar doble clic
+            $('.empleado-row').dblclick(function () {
+                var empleadoId = $(this).data('id');
+                window.location.href = '/Operadores/Detalles/' + empleadoId;
+            });
+
+            // Opcional: Efecto hover
+            $('.empleado-row').hover(
+                function () { $(this).addClass('table-active'); },
+                function () { $(this).removeClass('table-active'); }
+            );
+        });
+    </script>
+}

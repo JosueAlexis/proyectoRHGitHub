@@ -1,0 +1,119 @@
+﻿@page
+@model ProyectoRH2025.Pages.Sellos.AsignarOperadorModel
+@{
+    ViewData["Title"] = "Asignar Sello a Operador";
+}
+
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Asignar Sello a Operador</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label">Sello disponible</label>
+                    <select asp-for="IdSello" asp-items="Model.Sellos" class="form-select"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tipo de Asignación</label>
+                    <select asp-for="TipoAsignacion" asp-items="Model.TiposAsignacion" class="form-select" id="TipoAsignacion"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Operador principal</label>
+                    <select asp-for="IdOperador" asp-items="Model.Operadores" class="form-select operador-select"></select>
+                </div>
+
+                <div class="mb-3" id="segundo-operador-container" style="display: none;">
+                    <label class="form-label">Segundo operador (opcional)</label>
+                    <select asp-for="IdOperador2" asp-items="Model.Operadores" class="form-select operador-select"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Unidad</label>
+                    <select asp-for="IdUnidad" asp-items="Model.Unidades" class="form-select unidad-select"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Ruta</label>
+                    <input asp-for="Ruta" class="form-control" />
+                    <span asp-validation-for="Ruta" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Caja</label>
+                    <input asp-for="Caja" class="form-control" />
+                    <span asp-validation-for="Caja" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Comentarios</label>
+                    <textarea asp-for="Comentarios" class="form-control"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Coordinador</label>
+                    <select asp-for="idCoordinador" asp-items="Model.Coordinadores" class="form-select"></select>
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check-circle"></i> Asignar Sello
+                </button>
+            </form>
+
+            @if (!string.IsNullOrEmpty(Model.Mensaje))
+            {
+                <div class="alert alert-success d-flex align-items-center mt-4" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <div>@Model.Mensaje</div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- jQuery y Select2 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Activar Select2 en operador y unidad
+            $('.operador-select, .unidad-select').select2({
+                width: '100%',
+                placeholder: "Buscar...",
+                matcher: function (params, data) {
+                    if ($.trim(params.term) === '') return data;
+                    if (typeof data.text === 'undefined') return null;
+                    if (data.text.toLowerCase().includes(params.term.toLowerCase())) return data;
+                    return null;
+                }
+            });
+
+            // Mostrar u ocultar segundo operador si es comboy
+            $('#TipoAsignacion').on('change', function () {
+                const tipo = parseInt($(this).val());
+                $('#segundo-operador-container').toggle(tipo === 1);
+            }).trigger('change');
+
+            // 🔒 Validar que no se seleccione el mismo operador dos veces en comboy
+            $('form').on('submit', function (e) {
+                const tipo = parseInt($('#TipoAsignacion').val());
+                const op1 = $('#IdOperador').val();
+                const op2 = $('#IdOperador2').val();
+
+                if (tipo === 1 && op1 && op2 && op1 === op2) {
+                    e.preventDefault();
+                    alert("❌ No puedes seleccionar el mismo operador dos veces en Comboy.");
+                }
+            });
+        });
+    </script>
+}
+

@@ -1,0 +1,84 @@
+﻿@page
+@model ProyectoRH2025.Pages.IT.CrearUsuarioModel
+@{
+    ViewData["Title"] = "Crear Usuario";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Crear nuevo usuario</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Usuario</label>
+                        <input asp-for="Usuario.UsuarioNombre" class="form-control" />
+                        <span asp-validation-for="Usuario.UsuarioNombre" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Correo electrónico</label>
+                        <input asp-for="Usuario.CorreoElectronico" class="form-control" />
+                        <span asp-validation-for="Usuario.CorreoElectronico" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nombre completo</label>
+                        <input asp-for="Usuario.NombreCompleto" class="form-control" />
+                        <span asp-validation-for="Usuario.NombreCompleto" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Rol</label>
+                        <select asp-for="Usuario.idRol" asp-items="Model.Roles" class="form-select"></select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Estado</label>
+                        <select asp-for="Usuario.Status" class="form-select">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Contraseña inicial</label>
+                        <input asp-for="PasswordInicial" class="form-control" type="password" />
+                        <span asp-validation-for="PasswordInicial" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <div class="form-check">
+                            <input asp-for="ForzarCambio" class="form-check-input" type="checkbox" />
+                            <label class="form-check-label" asp-for="ForzarCambio">
+                                Requiere cambiar contraseña al iniciar sesión
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-page="/IT/Usuarios" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Crear Usuario
+                    </button>
+                </div>
+            </form>
+            @if (!string.IsNullOrEmpty(Model.MensajeError))
+            {
+                <div class="alert alert-danger mt-3">
+                    @Model.MensajeError
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

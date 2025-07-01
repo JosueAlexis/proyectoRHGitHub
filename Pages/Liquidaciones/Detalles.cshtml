@@ -1,0 +1,346 @@
+﻿@page "{id:int?}"
+@model ProyectoRH2025.Pages.Liquidaciones.DetallesModel
+@{
+    ViewData["Title"] = "Detalles de Liquidación";
+}
+
+<style>
+    .details-container {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .details-header {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .details-section {
+        margin-bottom: 15px;
+    }
+
+        .details-section dt {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .details-section dd {
+            margin-left: 0;
+            color: #6c757d;
+        }
+
+    /* OPTIMIZACIÓN: Lazy loading para imágenes */
+    .images-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .image-container {
+        position: relative;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+        overflow: hidden;
+        aspect-ratio: 4/3;
+        background-color: #f8f9fa;
+    }
+
+    .lazy-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+        opacity: 0;
+    }
+
+        .lazy-image.loaded {
+            opacity: 1;
+        }
+
+    .image-placeholder {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e9ecef;
+        color: #6c757d;
+        font-size: 0.8rem;
+        text-align: center;
+    }
+
+    .loading-spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 2px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 2px solid #007bff;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+    }
+
+    /* CSS simple para la animación */
+    .spinner-animation {
+        animation: spin 1s linear infinite;
+    }
+
+    .no-images {
+        font-style: italic;
+        color: #6c757d;
+    }
+
+    .error-message {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    /* Modal para vista previa de imágenes */
+    .image-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.8);
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 90%;
+        max-height: 90%;
+    }
+
+    .modal-image {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        color: white;
+        font-size: 30px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    /* NUEVO: Diagnóstico de rendimiento */
+    .performance-info {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="details-container">
+    <div class="details-header">
+        <h2>@ViewData["Title"]: Folio @Model.LiquidacionDetalle?.Folio</h2>
+
+        <!-- DIAGNÓSTICO DE RENDIMIENTO (temporal) -->
+        @if (!string.IsNullOrEmpty(Model.DiagnosticoTiempos))
+        {
+            <div class="alert performance-info mt-2 py-2">
+                <i class="fas fa-tachometer-alt"></i> <strong>Rendimiento:</strong> @Model.DiagnosticoTiempos
+            </div>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger error-message">@Model.ErrorMessage</div>
+    }
+    else if (Model.LiquidacionDetalle != null)
+    {
+        <h4>Información del Viaje</h4>
+        <hr />
+        <dl class="row details-section">
+            <dt class="col-sm-3">Folio:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.LiquidacionDetalle.Folio)</dd>
+            <dt class="col-sm-3">Cliente:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.LiquidacionDetalle.Cliente)</dd>
+            <dt class="col-sm-3">Tractor:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.LiquidacionDetalle.Tractor)</dd>
+            <dt class="col-sm-3">Remolque:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.LiquidacionDetalle.Remolque)</dd>
+            <dt class="col-sm-3">Fecha de Salida:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.LiquidacionDetalle.FechaSalida)</dd>
+            <dt class="col-sm-3">Origen:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.LiquidacionDetalle.Origen)</dd>
+            <dt class="col-sm-3">Destino:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.LiquidacionDetalle.Destino)</dd>
+            <dt class="col-sm-3">Conductor:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.LiquidacionDetalle.DriverName)</dd>
+            <dt class="col-sm-3">Status:</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.StatusText)</dd>
+            <dt class="col-sm-3">Fecha de Captura (POD):</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.LiquidacionDetalle.CaptureDate)</dd>
+        </dl>
+
+        <h4>
+            Evidencias Fotográficas
+            @if (Model.EvidenciasInfo?.Any() == true)
+            {
+                <small class="text-muted">(@Model.EvidenciasInfo.Count imagen(es))</small>
+            }
+        </h4>
+        <hr />
+
+        @if (Model.EvidenciasInfo?.Any() == true)
+        {
+            <div class="images-gallery">
+                @foreach (var evidencia in Model.EvidenciasInfo)
+                {
+                    <div class="image-container" data-evidencia-id="@evidencia.EvidenciaID">
+                        @if (evidencia.HasImage)
+                        {
+                            <div class="image-placeholder">
+                                <div class="loading-spinner spinner-animation"></div>
+                                <div style="margin-top: 30px;">Cargando...</div>
+                            </div>
+                            <img class="lazy-image"
+                                 data-src="@Url.Page("./Detalles", "Image", new { evidenciaId = evidencia.EvidenciaID })"
+                                 alt="@evidencia.FileName"
+                                 title="@evidencia.FileName - Click para ampliar" />
+                        }
+                        else
+                        {
+                            <div class="image-placeholder">
+                                <div>
+                                    <i class="fas fa-image"></i><br />
+                                    <small>@evidencia.FileName</small><br />
+                                    @if (evidencia.CaptureDate.HasValue)
+                                    {
+                                        <small class="text-muted">@evidencia.CaptureDate.Value.ToString("dd/MM/yyyy")</small>
+                                        <br />
+                                    }
+                                    <small class="text-muted">(No disponible)</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="no-images">No hay imágenes de evidencia para esta liquidación.</p>
+        }
+    }
+    else if (string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <p>Cargando detalles de la liquidación...</p>
+    }
+
+    <div style="margin-top: 20px;">
+        <a asp-page="./Index" class="btn btn-secondary">Volver al Listado</a>
+    </div>
+</div>
+
+<!-- Modal para vista previa de imágenes -->
+<div id="imageModal" class="image-modal">
+    <span class="close-modal">&times;</span>
+    <div class="modal-content">
+        <img id="modalImage" class="modal-image" src="" alt="">
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // OPTIMIZACIÓN: Implementar Intersection Observer para lazy loading
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const lazyImage = entry.target.querySelector('.lazy-image');
+                    const placeholder = entry.target.querySelector('.image-placeholder');
+
+                    if (lazyImage && lazyImage.dataset.src) {
+                        lazyImage.src = lazyImage.dataset.src;
+
+                        lazyImage.onload = function() {
+                            lazyImage.classList.add('loaded');
+                            if (placeholder) placeholder.style.display = 'none';
+                        };
+
+                        lazyImage.onerror = function() {
+                            if (placeholder) {
+                                placeholder.innerHTML = '<div><i class="fas fa-exclamation-triangle text-warning"></i><br /><small>Error al cargar imagen</small></div>';
+                            }
+                        };
+
+                        observer.unobserve(entry.target);
+                    }
+                }
+            });
+        }, {
+            rootMargin: '50px 0px', // Comenzar a cargar 50px antes de que sea visible
+            threshold: 0.1
+        });
+
+        // Observar todos los contenedores de imágenes
+        document.querySelectorAll('.image-container').forEach(container => {
+            imageObserver.observe(container);
+        });
+
+        // Modal para vista previa de imágenes
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const closeModal = document.querySelector('.close-modal');
+
+        // Abrir modal al hacer click en una imagen cargada
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('lazy-image') && e.target.classList.contains('loaded')) {
+                modal.style.display = 'block';
+                modalImage.src = e.target.src;
+                modalImage.alt = e.target.alt;
+            }
+        });
+
+        // Cerrar modal
+        if (closeModal) {
+            closeModal.onclick = function() {
+                modal.style.display = 'none';
+            };
+        }
+
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    });
+
+    // Crear CSS para la animación de manera programática (evita problemas de Razor)
+    const style = document.createElement('style');
+    style.textContent = `
+    @@keyframes spin {
+
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>

@@ -1,0 +1,165 @@
+﻿@inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
+@{
+    var rol = Context.Session.GetInt32("idRol");
+    var idUsuario = Context.Session.GetInt32("idUsuario");
+    var mostrarMenu = true;
+
+    if (idUsuario != null)
+    {
+        var db = Context.RequestServices.GetService(typeof(ProyectoRH2025.Data.ApplicationDbContext)) as ProyectoRH2025.Data.ApplicationDbContext;
+        var usuario = db.TblUsuarios.FirstOrDefault(u => u.idUsuario == idUsuario);
+        mostrarMenu = usuario != null && (usuario.DefaultPassw ?? 0) == 0 && usuario.CambioPass != null;
+    }
+
+    var rolesIT = new[] { 5, 7, 1007 }; // Roles de Administración IT (Rol 5 es Administrativo)
+    var idRolLiquidaciones = 1009; // Rol para Liquidaciones
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Test2 Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ProyectoRH2025.styles.css" asp-append-version="true" /> @* Asegúrate que esta línea esté si usas scoped CSS *@
+</head>
+<body>
+    @if (mostrarMenu)
+    {
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>Test2 Admin</h3>
+            </div>
+
+            <div class="module">
+                <div class="sidebar-link" onclick="toggleSubmodules('operadores')">
+                    <i class="fas fa-users"></i>
+                    <span>Operadores</span>
+                </div>
+                <div class="submodule" data-parent="operadores">
+                    <a class="sidebar-link" asp-page="/Operadores/Buscar">
+                        <i class="fas fa-search"></i>
+                        <span>Buscar</span>
+                    </a>
+                    <a class="sidebar-link" asp-page="/Operadores/AltaEmpleado">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Dar De Alta</span>
+                    </a>
+                    <a class="sidebar-link" asp-page="/Operadores/Documentos">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Documentos</span>
+                    </a>
+                </div>
+            </div>
+
+            @if (new[] { 5, 2, 1008, 6 }.Contains(rol ?? 0)) // Rol 5 (Administrativo) también tiene acceso a Sellos
+            {
+                <div class="module">
+                    <div class="sidebar-link" onclick="toggleSubmodules('sellos-main')">
+                        <i class="fas fa-stamp"></i>
+                        <span>Sellos</span>
+                    </div>
+                    <div class="submodule" data-parent="sellos-main">
+                        <a class="sidebar-link" asp-page="/Sellos/Index">
+                            <i class="fas fa-search"></i>
+                            <span>Buscar</span>
+                        </a>
+                        <a class="sidebar-link" asp-page="/Sellos/Create">
+                            <i class="fas fa-plus"></i>
+                            <span>Registrar Sello</span>
+                        </a>
+                        <a class="sidebar-link" asp-page="/Sellos/Importar">
+                            <i class="fas fa-file-excel"></i>
+                            <span>Importar desde Excel</span>
+                        </a>
+                        <a class="sidebar-link" asp-page="/Sellos/AsignarSupervisor">
+                            <i class="fas fa-random"></i>
+                            <span>Asignar a Supervisor</span>
+                        </a>
+                        <a class="sidebar-link" asp-page="/Sellos/Asignaciones/Index">
+                            <i class="fas fa-tasks"></i>
+                            <span>Asignaciones</span>
+                        </a>
+                        <a class="sidebar-link" asp-page="/Sellos/Inventario">
+                            <i class="fas fa-boxes"></i>
+                            <span>Inventario</span>
+                        </a>
+                        <a class="sidebar-link" asp-page="/Sellos/InventarioCoordinador">
+                            <i class="fas fa-user-check"></i>
+                            <span>Inventario Coordinador</span>
+                        </a>
+                        <a class="sidebar-link" asp-page="/Sellos/AsignarOperador">
+                            <i class="fas fa-share-square"></i>
+                            <span>Asignar a Operador</span>
+                        </a>
+                    </div>
+                </div>
+            }
+
+            @* --- NUEVO MÓDULO PARA LIQUIDACIONES --- *@
+            @if (rol == idRolLiquidaciones || rolesIT.Contains(rol ?? 0)) // Visible para rol Liquidaciones (1009) o roles en rolesIT (incluye 5)
+            {
+                <div class="module">
+                    <a class="sidebar-link" asp-area="" asp-page="/Liquidaciones/Index">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span>Liquidaciones</span>
+                    </a>
+                </div>
+            }
+            @* ----------------------------------------- *@
+
+            @if (rolesIT.Contains(rol ?? 0)) // Visible para roles en rolesIT
+            {
+                <div class="module">
+                    <div class="sidebar-link" onclick="toggleSubmodules('admin')">
+                        <i class="fas fa-cogs"></i>
+                        <span>Administración</span>
+                    </div>
+                    <div class="submodule" data-parent="admin">
+                        <a class="sidebar-link" asp-page="/IT/Usuarios">
+                            <i class="fas fa-users-cog"></i>
+                            <span>Usuarios</span>
+                        </a>
+                        <a class="sidebar-link" asp-page="/IT/CrearUsuario">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Crear Usuario</span>
+                        </a>
+                    </div>
+                </div>
+            }
+
+            <a class="sidebar-link" asp-page="/CambioPassword">
+                <i class="fas fa-key"></i>
+                <span>Cambiar contraseña</span>
+            </a>
+
+            <a asp-page="/Logout" class="sidebar-link">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Cerrar sesión</span>
+            </a>
+
+        </div>
+    }
+
+    <div class="content">
+        @if (mostrarMenu)
+        {
+            <div class="bg-light p-2 text-end">
+                👤 Bienvenido, <strong>@Context.Session.GetString("usuarioNombre")</strong>
+            </div>
+        }
+        <main role="main" class="pb-3 pt-3 px-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
